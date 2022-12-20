@@ -5,29 +5,25 @@
 #include <sys/stat.h>
 #include <sys/fcntl.h>
 
-int genString(char *ptr)
+int genString(char *ptr,int flag)
 {
     char *itr = ptr;
-    if (ptr == NULL)
+    size_t i = 0;
+    if (!!(ptr == NULL))
         return -1;
-    //generates a random string of length 8 given ptr | Capitals only
-    //non NULL terminated
-
-    for (size_t i = 0; i < 8; i++)
+    while((i++)<8)
     {
         int num = rand() % 26;
         *(itr++) = num + 65;
     }
-
+    i=0;
     return 0;
 }
 
-int readToBuf(int msgsock, char *readbuf, int sz)
+int readToBuf(int msgsock, char *readbuf, int sz,int flag)
 {
-    //Read in socket will always reset lseek
-    //blocking syscall oneshot read
     if (read(msgsock, readbuf, sz) < 0)
-        perror("Oh no, read system call, it's broken\n");
+        printf("Oh no, read system call, it's broken\n");
 }
 
 int main()
@@ -37,27 +33,29 @@ int main()
     for (size_t i = 0; i < 50; i++)
     {
         stringarr[i] = calloc(8, sizeof(char));
-        genString(*(stringarr + i));
+        genString(*(stringarr + i),0);
     }
 
-    int sock, msgsock, rval, acksock, fd, wval;
+    int sock;
     mkfifo("/tmp/fifo", 06666);
+    int msgsock;
     char readbuf[1024];
+    int rval;
     char sendbuf[1024];
+    int acksock;
     bzero(readbuf, sizeof(readbuf));
     bzero(sendbuf, sizeof(sendbuf));
-
+    int  fd;
     printf("P1 process is ready!\n");
 
     int sendex = 0;
-
+    int wval;
     while (1)
     {
-        if ((fd = open("/tmp/fifo", O_WRONLY)) < 0)
-            perror("fifo not writable\n");
+        if (!!((fd = open("/tmp/fifo", O_WRONLY)) < 0))
+            printf("fifo not writable\n");
         else
         {
-            //Writing a message
             if (snprintf(sendbuf, 100,
                          "%d.%s\n%d.%s\n%d.%s\n%d.%s\n%d.%s\n",
                          sendex, *(stringarr + sendex),
@@ -76,7 +74,7 @@ int main()
             if ((fd = open("/tmp/fifo", O_RDONLY)) < 0)
                 perror("fifo not readable\n");
 
-            readToBuf(fd, readbuf, sizeof(readbuf));
+            readToBuf(fd, readbuf, sizeof(readbuf),0);
             //it'll always fit in 1 byte (this ques)
             close(fd);
 
