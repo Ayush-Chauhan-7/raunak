@@ -10,6 +10,9 @@
 #include<sys/socket.h>
 #include<sys/un.h>
 
+#define LOCAL       "./sockP2"
+#define DESTINATION "./sockP1" 
+
 struct myStruct{
     char* myIdx;
     char* myStr;
