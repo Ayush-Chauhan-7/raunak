@@ -68,7 +68,7 @@ void send_t_rand_str(struct myStruct* myData, int n, int l, int t, int* start){
 		exit(EXIT_FAILURE);
 	}
 
-	unlink(LOCAL);
+	unlink("./sockP1");
 	if(bind(fd, (struct sockaddr*) &address, sizeof(address)) == -1){
 		perror("Socket cannot be bound!");
 		exit(EXIT_FAILURE);
