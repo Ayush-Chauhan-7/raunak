@@ -124,9 +124,11 @@ int main(int argc, const char* argv[]){
         printf("Received data:\n");
 		receive_t_rand_str(&myData, num_of_rand_str, len_of_rand_str, &start);
         printf("----------------\n");
+		sleep(1);
 		printf("Sent data:\n");
 		send_last_rand_str(myData, num_of_rand_str, len_of_rand_str, &start);
         printf("----------------\n");
 	}
+
     return 0;
 }
