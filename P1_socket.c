@@ -42,6 +42,7 @@ int char_to_int(char** ptr,int flag){
 void generate_n_rand_str(struct myStruct** myData, int n, int l, int flag){
     srand(time(NULL));
     *myData = (struct myStruct*) malloc(n*sizeof(struct myStruct));
+    int curr = 0;
     while(curr<n){
         (*myData)[curr].myStr = (char*) malloc((l)*sizeof(char));
         (*myData)[curr].myIdx = (char*) malloc((curr<10?2:3)*sizeof(char));
@@ -52,7 +53,6 @@ void generate_n_rand_str(struct myStruct** myData, int n, int l, int flag){
         }
         (*myData)[curr].myStr[l-1] = '\0';
         curr++;
-    }
     }
 }
 
