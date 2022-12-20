@@ -148,8 +148,6 @@ int main(int argc, const char* argv[]){
         printf("Received data:\n");
         start = receive_last_rand_str(&myData, num_of_rand_str, len_of_rand_str, &start,0)+1;
         printf("----------------\n");
-        sleep(1);
     }
-
     return 0;
 }
