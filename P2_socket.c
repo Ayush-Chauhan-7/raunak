@@ -75,32 +75,37 @@ void receive_t_rand_str(struct myStruct** myData, int n, int l, int* start, int 
 	close(fd);
 }
 
-void send_last_rand_str(struct myStruct* myData, int n, int l, int *start, int flag){
-    int fd;
+void send_last_rand_str(struct myStruct* myData, int n, int l, int *start){
     struct sockaddr_un address;
+	int fd;
+
 	address.sun_family = AF_UNIX;
-	memcpy(address.sun_path, "./sockP2", strlen("./sockP2") + 1); 
-    int i = 0;
-	if(!!((fd = socket(AF_UNIX, SOCK_DGRAM, 0)) == -1)){
-		printf("Socket cannot be initialized!");
+	memcpy(address.sun_path, LOCAL, strlen(LOCAL) + 1); 
+
+	if((fd = socket(AF_UNIX, SOCK_DGRAM, 0)) == -1){
+		perror("Socket cannot be initialized!");
 		exit(EXIT_FAILURE);
 	}
-    i++;
-	unlink("./sockP2");
+
+	unlink(LOCAL);
 	if(bind(fd, (struct sockaddr*) &address, sizeof(address)) == -1){
-		printf("Socket cannot be bound!");
+		perror("Socket cannot be bound!");
 		exit(EXIT_FAILURE);
 	}
-    i++;
+
 	struct sockaddr_un destination;
 	destination.sun_family = AF_UNIX;
-	memcpy(destination.sun_path, "./sockP1", strlen("./sockP1") + 1); 
-    i++;
+	memcpy(destination.sun_path, DESTINATION, strlen(DESTINATION) + 1); 
+
 	sendto(fd, myData[(*start)-1].myIdx, ((*start)-1<10?2:3), 0, (struct sockaddr*) &destination, sizeof(destination));
 	sendto(fd, myData[(*start)-1].myStr, l, 0, (struct sockaddr*) &destination, sizeof(destination));
+
 	printf("%s\n", myData[(*start)-1].myIdx);
+	// printf("%s %s\n", myData[(*start)-1].myIdx, myData[(*start)-1].myStr);
+
 	close(fd); 
 }
+
 
 int main(int argc, const char* argv[]){
     int num_of_rand_str = 50;
