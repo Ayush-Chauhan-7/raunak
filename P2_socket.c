@@ -16,54 +16,50 @@ struct myStruct{
     int i;
 };
 
-void receive_t_rand_str(struct myStruct** myData, int n, int l, int* start, int flag){
+void receive_t_rand_str(struct myStruct** myData, int n, int l, int* start){
+	struct sockaddr_un address;
 	int fd;
-    struct sockaddr_un address;
 
-	if(!!((fd = socket(AF_UNIX, SOCK_DGRAM, 0)) == -1)){
-		printf("Socket cannot be initialized!");
+	if((fd = socket(AF_UNIX, SOCK_DGRAM, 0)) == -1){
+		perror("Socket cannot be initialized!");
 		exit(EXIT_FAILURE);
 	}
-    int i = 0;
+
 	address.sun_family = AF_UNIX;
-	memcpy(address.sun_path, "./sockP2", strlen("./sockP2") + 1);
-    i++;
-	unlink("./sockP2");
+	memcpy(address.sun_path, LOCAL, strlen(LOCAL) + 1);
+
+	unlink(LOCAL);
 	if(bind(fd, (struct sockaddr*) &address, sizeof(address)) == -1){
-		printf("Socket cannot be bound!");
+		perror("Socket cannot be bound!");
 		exit(EXIT_FAILURE);
 	}
-    i++;
+
 	struct sockaddr_un emitter;
 	socklen_t len;
-    i++;
+
 	struct myStruct *temp = (struct myStruct*) malloc(sizeof(struct myStruct));
 	temp->myIdx = (char*) malloc(sizeof(char)*((*start)<10?2:3));
-    size_t size;
-	temp->myStr = (char*) malloc(sizeof(char)*6);
+	temp->myStr = (char*) malloc(sizeof(char)*MAX_MESSAGE_SIZE);
+	size_t size;
 	int ii = 0;
 	while(ii!=5){
+		// printf("Write a message: ");
 		size = recvfrom(fd, temp->myIdx, ((*start)<10?2:3), 0, (struct sockaddr *) &emitter, &len);
-		if(!!(size == -1)) { 
+		if(size == -1) { 
 			if(errno == ECONNRESET) printf("ECONNRESET\n");
 			close(fd);
-			printf("Receiver"); 
-            exit(EXIT_FAILURE); 
+			perror("Receiver"); exit(EXIT_FAILURE); 
 		}
-        i++;
 		if((*start)!=0 && strcmp(temp->myIdx, (*myData)[(*start)-1].myIdx)==0){
 			break;
 		}
         memcpy((*myData)[*start].myIdx, temp->myIdx, ((*start)<10?2:3));
-        i++;
 		size = recvfrom(fd, temp->myStr, l, 0, (struct sockaddr *) &emitter, &len);
-		if(!!(size == -1)) { 
+		if(size == -1) { 
 			if(errno == ECONNRESET) printf("ECONNRESET\n");
 			close(fd);
-			printf("Receiver"); 
-            exit(EXIT_FAILURE); 
+			perror("Receiver"); exit(EXIT_FAILURE); 
 		}
-        i++;
         memcpy((*myData)[*start].myStr, temp->myStr, l);
 
         printf("%s %s\n", (*myData)[*start].myIdx, (*myData)[*start].myStr);
