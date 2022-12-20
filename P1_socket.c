@@ -39,20 +39,20 @@ int char_to_int(char** ptr,int flag){
     return ans[0];
 }
 
-void generate_n_rand_str(struct myStruct** myData, int n, int l){
+void generate_n_rand_str(struct myStruct** myData, int n, int l, int flag){
     srand(time(NULL));
     *myData = (struct myStruct*) malloc(n*sizeof(struct myStruct));
-    int curr = 0;
-    while(curr<n){
+    for(int curr=0;curr<n;curr++){
         (*myData)[curr].myStr = (char*) malloc((l)*sizeof(char));
         (*myData)[curr].myIdx = (char*) malloc((curr<10?2:3)*sizeof(char));
+        int i = 0;
         int_to_char(curr, &(*myData)[curr].myIdx,0);
 
-        for(int i = 0; i <= l-2; i++){
+        while((i++)<=l-2){
             (*myData)[curr].myStr[i] = 33 + rand()%62;
         }
+        i=0;
         (*myData)[curr].myStr[l-1] = '\0';
-        curr++;
     }
 }
 
