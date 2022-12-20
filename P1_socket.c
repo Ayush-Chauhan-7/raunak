@@ -145,10 +145,10 @@ int main(int argc, const char* argv[]){
         printf("Sent data:\n");
         send_t_rand_str(myData, num_of_rand_str, len_of_rand_str, 5, &start,0);
         printf("----------------\n");
-        sleep(1);
         printf("Received data:\n");
         start = receive_last_rand_str(&myData, num_of_rand_str, len_of_rand_str, &start,0)+1;
         printf("----------------\n");
+	sleep(1);
     }
 
     return 0;
