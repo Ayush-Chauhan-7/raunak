@@ -121,11 +121,11 @@ int main(int argc, const char* argv[]){
 	int start=0;
 	while(start<num_of_rand_str){
         printf("Received data:\n");
-		receive_t_rand_str(&myData, num_of_rand_str, len_of_rand_str, &start);
+		receive_t_rand_str(&myData, num_of_rand_str, len_of_rand_str, &start,0);
         printf("----------------\n");
 		sleep(1);
 		printf("Sent data:\n");
-		send_last_rand_str(myData, num_of_rand_str, len_of_rand_str, &start);
+		send_last_rand_str(myData, num_of_rand_str, len_of_rand_str, &start,0);
         printf("----------------\n");
 	}
 
