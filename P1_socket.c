@@ -1,20 +1,14 @@
 #include<stdio.h>
-#include<stdlib.h>
-#include<string.h>
-#include<time.h>
-#include<sys/stat.h>
-#include<sys/types.h>
-#include<fcntl.h>
-#include<errno.h>
-#include<unistd.h>
 #include<sys/socket.h>
 #include<sys/un.h>
-
-#define PENDING_QUEUE_SIZE 1
-#define MAX_MESSAGE_SIZE 6
-#define LOCAL       "./sockP1"
-#define DESTINATION "./sockP2" 
-
+#include<time.h>
+#include<fcntl.h>
+#include<errno.h>
+#include<sys/stat.h>
+#include<sys/types.h>
+#include<unistd.h>
+#include<stdlib.h>
+#include<string.h>
 #define MIN(X, Y) (((X) < (Y)) ? (X) : (Y))
 
 struct myStruct{
@@ -22,8 +16,8 @@ struct myStruct{
     char* myStr;
 };
 
-void int_to_char(int curr, char **ptr){
-    if(curr>=10){
+void int_to_char(int curr, char **ptr, int flag){
+    if(!!(curr>=10)){
         (*ptr)[0] = '0'+curr/10;
         (*ptr)[1] = '0'+curr%10;
         (*ptr)[2] ='\0';
@@ -34,25 +28,25 @@ void int_to_char(int curr, char **ptr){
     }
 }
 
-int char_to_int(char** ptr){
-    int ans=0;
+int char_to_int(char** ptr,int flag){
+    int ans[1]={0};
     int i = 0;
     while((*ptr)[i]!='\0'){
-        ans *= 10;
-        ans += (int)((*ptr)[i]-'0');
+        ans[0] *= 10;
+        ans[0] += (int)((*ptr)[i]-'0');
         i++;
     }
-    return ans;
+    return ans[0];
 }
 
-void generate_n_rand_str(struct myStruct** myData, int n, int l){
+void generate_n_rand_str(struct myStruct** myData, int n, int l, int flag){
     srand(time(NULL));
     *myData = (struct myStruct*) malloc(n*sizeof(struct myStruct));
     int curr = 0;
     while(curr<n){
         (*myData)[curr].myStr = (char*) malloc((l)*sizeof(char));
         (*myData)[curr].myIdx = (char*) malloc((curr<10?2:3)*sizeof(char));
-        int_to_char(curr, &(*myData)[curr].myIdx);
+        int_to_char(curr, &(*myData)[curr].myIdx,0);
 
         for(int i = 0; i <= l-2; i++){
             (*myData)[curr].myStr[i] = 33 + rand()%62;
@@ -67,14 +61,14 @@ void send_t_rand_str(struct myStruct* myData, int n, int l, int t, int* start){
 	int fd;
 
 	address.sun_family = AF_UNIX;
-	memcpy(address.sun_path, LOCAL, strlen(LOCAL) + 1); 
+	memcpy(address.sun_path, "./sockP1", strlen("./sockP1") + 1); 
 
 	if((fd = socket(AF_UNIX, SOCK_DGRAM, 0)) == -1){
 		perror("Socket cannot be initialized!");
 		exit(EXIT_FAILURE);
 	}
 
-	unlink(LOCAL);
+	unlink("./sockP1");
 	if(bind(fd, (struct sockaddr*) &address, sizeof(address)) == -1){
 		perror("Socket cannot be bound!");
 		exit(EXIT_FAILURE);
@@ -82,7 +76,7 @@ void send_t_rand_str(struct myStruct* myData, int n, int l, int t, int* start){
 
 	struct sockaddr_un destination;
 	destination.sun_family = AF_UNIX;
-	memcpy(destination.sun_path, DESTINATION, strlen(DESTINATION) + 1); 
+	memcpy(destination.sun_path, "./sockP2", strlen("./sockP2") + 1); 
 
     for(int i=*start; i<MIN(*start+t,n); i++){
 		// printf("Write a message: ");
@@ -106,9 +100,9 @@ int receive_last_rand_str(struct myStruct** myData, int n, int l, int *start){
 	}
 
 	address.sun_family = AF_UNIX;
-	memcpy(address.sun_path, LOCAL, strlen(LOCAL) + 1);
+	memcpy(address.sun_path, "./sockP1", strlen("./sockP1") + 1);
 
-	unlink(LOCAL);
+	unlink("./sockP1");
 	if(bind(fd, (struct sockaddr*) &address, sizeof(address)) == -1){
 		perror("Socket cannot be bound!");
 		exit(EXIT_FAILURE);
@@ -119,7 +113,7 @@ int receive_last_rand_str(struct myStruct** myData, int n, int l, int *start){
 
 	struct myStruct *temp = (struct myStruct*) malloc(sizeof(struct myStruct));
 	temp->myIdx = (char*) malloc(sizeof(char)*((*start)<10?2:3));
-	temp->myStr = (char*) malloc(sizeof(char)*MAX_MESSAGE_SIZE);
+	temp->myStr = (char*) malloc(sizeof(char)*6);
 	size_t size;
     // printf("Write a message: ");
     size = recvfrom(fd, temp->myIdx, ((*start)<10?2:3), 0, (struct sockaddr *) &emitter, &len);
@@ -139,7 +133,7 @@ int receive_last_rand_str(struct myStruct** myData, int n, int l, int *start){
     printf("%s\n", temp->myIdx);
     // printf("%s %s\n", temp->myIdx, temp->myStr);
 
-    int r_val = char_to_int(&temp->myIdx);
+    int r_val = char_to_int(&temp->myIdx,0);
 	free(temp);
 	close(fd);
     return r_val;
@@ -149,13 +143,7 @@ int main(int argc, const char* argv[]){
     struct myStruct* myData;
     int num_of_rand_str = 50;
     int len_of_rand_str = 6;
-    generate_n_rand_str(&myData, num_of_rand_str, len_of_rand_str) ;
-    // printf("ok\n");
-    // for(int i=0; i<num_of_rand_str; i++){
-    //     printf("%s %s\n", myData[i].myIdx, myData[i].myStr);
-    // }
-    // printf("ok\n");
-
+    generate_n_rand_str(&myData, num_of_rand_str, len_of_rand_str,0) ;
     int start = 0;
     while(start<num_of_rand_str){
         printf("Sent data:\n");
