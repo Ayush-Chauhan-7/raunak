@@ -30,9 +30,9 @@ void receive_t_rand_str(struct myStruct** myData, int n, int l, int* start){
 	}
 
 	address.sun_family = AF_UNIX;
-	memcpy(address.sun_path, LOCAL, strlen(LOCAL) + 1);
+	memcpy(address.sun_path, "./sockP2", strlen("./sockP2") + 1);
 
-	unlink(LOCAL);
+	unlink("./sockP2");
 	if(bind(fd, (struct sockaddr*) &address, sizeof(address)) == -1){
 		perror("Socket cannot be bound!");
 		exit(EXIT_FAILURE);
@@ -82,14 +82,14 @@ void send_last_rand_str(struct myStruct* myData, int n, int l, int *start){
 	int fd;
 
 	address.sun_family = AF_UNIX;
-	memcpy(address.sun_path, LOCAL, strlen(LOCAL) + 1); 
+	memcpy(address.sun_path, "./sockP2", strlen("./sockP2") + 1); 
 
 	if((fd = socket(AF_UNIX, SOCK_DGRAM, 0)) == -1){
 		perror("Socket cannot be initialized!");
 		exit(EXIT_FAILURE);
 	}
 
-	unlink(LOCAL);
+	unlink("./sockP2");
 	if(bind(fd, (struct sockaddr*) &address, sizeof(address)) == -1){
 		perror("Socket cannot be bound!");
 		exit(EXIT_FAILURE);
@@ -124,11 +124,9 @@ int main(int argc, const char* argv[]){
         printf("Received data:\n");
 		receive_t_rand_str(&myData, num_of_rand_str, len_of_rand_str, &start);
         printf("----------------\n");
-		sleep(1);
 		printf("Sent data:\n");
 		send_last_rand_str(myData, num_of_rand_str, len_of_rand_str, &start);
         printf("----------------\n");
 	}
-
     return 0;
 }
