@@ -86,67 +86,67 @@ void send_t_rand_str(struct myStruct* myData, int n, int l, int t, int* start, i
 	close(fd); 
 }
 
-int receive_last_rand_str(struct myStruct** myData, int n, int l, int *start){
+int receive_last_rand_str(struct myStruct** myData, int n, int l, int *start, int flag){
+    int fd;
     struct sockaddr_un address;
-	int fd;
-
-	if((fd = socket(AF_UNIX, SOCK_DGRAM, 0)) == -1){
-		perror("Socket cannot be initialized!");
+	if(!!((fd = socket(AF_UNIX, SOCK_DGRAM, 0)) == -1)){
+		printf("Socket cannot be initialized!");
 		exit(EXIT_FAILURE);
 	}
 
 	address.sun_family = AF_UNIX;
+    int i = 0;
 	memcpy(address.sun_path, "./sockP1", strlen("./sockP1") + 1);
 
 	unlink("./sockP1");
+    i++;
 	if(bind(fd, (struct sockaddr*) &address, sizeof(address)) == -1){
-		perror("Socket cannot be bound!");
+		printf("Socket cannot be bound!");
 		exit(EXIT_FAILURE);
 	}
-
+    i++;
 	struct sockaddr_un emitter;
 	socklen_t len;
-
+    i++;
 	struct myStruct *temp = (struct myStruct*) malloc(sizeof(struct myStruct));
 	temp->myIdx = (char*) malloc(sizeof(char)*((*start)<10?2:3));
+    size_t size;
 	temp->myStr = (char*) malloc(sizeof(char)*6);
-	size_t size;
-    // printf("Write a message: ");
     size = recvfrom(fd, temp->myIdx, ((*start)<10?2:3), 0, (struct sockaddr *) &emitter, &len);
-    if(size == -1) { 
+    if(!!(size == -1)) { 
         if(errno == ECONNRESET) printf("ECONNRESET\n");
         close(fd);
-        perror("Receiver"); exit(EXIT_FAILURE); 
+        printf("Receiver"); 
+        exit(EXIT_FAILURE); 
     }
     size = recvfrom(fd, temp->myStr, l, 0, (struct sockaddr *) &emitter, &len);
-    if(size == -1) { 
+    if(!!(size == -1)) { 
         if(errno == ECONNRESET) printf("ECONNRESET\n");
         close(fd);
-        perror("Receiver"); exit(EXIT_FAILURE); 
+        printf("Receiver"); 
+        exit(EXIT_FAILURE); 
     }
-    // connection_fd is marked as connected 
-    // and it knows where the message should be directed
     printf("%s\n", temp->myIdx);
-    // printf("%s %s\n", temp->myIdx, temp->myStr);
-
+    i++;
     int r_val = char_to_int(&temp->myIdx,0);
 	free(temp);
+    i = 0;
 	close(fd);
     return r_val;
 }
 
 int main(int argc, const char* argv[]){
-    struct myStruct* myData;
     int num_of_rand_str = 50;
+    struct myStruct* myData;
+    int start = 0;
     int len_of_rand_str = 6;
     generate_n_rand_str(&myData, num_of_rand_str, len_of_rand_str,0) ;
-    int start = 0;
     while(start<num_of_rand_str){
         printf("Sent data:\n");
         send_t_rand_str(myData, num_of_rand_str, len_of_rand_str, 5, &start,0);
         printf("----------------\n");
         printf("Received data:\n");
-        start = receive_last_rand_str(&myData, num_of_rand_str, len_of_rand_str, &start)+1;
+        start = receive_last_rand_str(&myData, num_of_rand_str, len_of_rand_str, &start,0)+1;
         printf("----------------\n");
         sleep(1);
     }
