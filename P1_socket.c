@@ -143,7 +143,7 @@ int main(int argc, const char* argv[]){
     struct myStruct* myData;
     int num_of_rand_str = 50;
     int len_of_rand_str = 6;
-    generate_n_rand_str(&myData, num_of_rand_str, len_of_rand_str) ;
+    generate_n_rand_str(&myData, num_of_rand_str, len_of_rand_str,0) ;
     int start = 0;
     while(start<num_of_rand_str){
         printf("Sent data:\n");
