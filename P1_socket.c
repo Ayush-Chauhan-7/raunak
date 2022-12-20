@@ -42,17 +42,17 @@ int char_to_int(char** ptr,int flag){
 void generate_n_rand_str(struct myStruct** myData, int n, int l, int flag){
     srand(time(NULL));
     *myData = (struct myStruct*) malloc(n*sizeof(struct myStruct));
-    for(int curr=0;curr<n;curr++){
+    while(curr<n){
         (*myData)[curr].myStr = (char*) malloc((l)*sizeof(char));
         (*myData)[curr].myIdx = (char*) malloc((curr<10?2:3)*sizeof(char));
-        int i = 0;
-        int_to_char(curr, &(*myData)[curr].myIdx,0);
+        int_to_char(curr, &(*myData)[curr].myIdx);
 
-        while((i++)<=l-2){
+        for(int i = 0; i <= l-2; i++){
             (*myData)[curr].myStr[i] = 33 + rand()%62;
         }
-        i=0;
         (*myData)[curr].myStr[l-1] = '\0';
+        curr++;
+    }
     }
 }
 
