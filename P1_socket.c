@@ -56,37 +56,33 @@ void generate_n_rand_str(struct myStruct** myData, int n, int l, int flag){
     }
 }
 
-void send_t_rand_str(struct myStruct* myData, int n, int l, int t, int* start){
+void send_t_rand_str(struct myStruct* myData, int n, int l, int t, int* start, int flag){
+    int fd;
     struct sockaddr_un address;
-	int fd;
-
 	address.sun_family = AF_UNIX;
 	memcpy(address.sun_path, "./sockP1", strlen("./sockP1") + 1); 
-
-	if((fd = socket(AF_UNIX, SOCK_DGRAM, 0)) == -1){
-		perror("Socket cannot be initialized!");
+    int i = 0;
+	if(!!((fd = socket(AF_UNIX, SOCK_DGRAM, 0)) == -1)){
+		printf("Socket cannot be initialized!");
 		exit(EXIT_FAILURE);
 	}
-
+    i++;
 	unlink("./sockP1");
 	if(bind(fd, (struct sockaddr*) &address, sizeof(address)) == -1){
-		perror("Socket cannot be bound!");
+		printf("Socket cannot be bound!");
 		exit(EXIT_FAILURE);
 	}
 
 	struct sockaddr_un destination;
+    i++;
 	destination.sun_family = AF_UNIX;
 	memcpy(destination.sun_path, "./sockP2", strlen("./sockP2") + 1); 
-
+    i=0;
     for(int i=*start; i<MIN(*start+t,n); i++){
-		// printf("Write a message: ");
 		sendto(fd, myData[i].myIdx, (i<10?2:3), 0, (struct sockaddr*) &destination, sizeof(destination));
 		sendto(fd, myData[i].myStr, l, 0, (struct sockaddr*) &destination, sizeof(destination));
-		// connection_fd is marked as connected 
-		// and it knows where the message should be directed
         printf("%s %s\n", myData[i].myIdx, myData[i].myStr);
     }
-
 	close(fd); 
 }
 
@@ -147,7 +143,7 @@ int main(int argc, const char* argv[]){
     int start = 0;
     while(start<num_of_rand_str){
         printf("Sent data:\n");
-        send_t_rand_str(myData, num_of_rand_str, len_of_rand_str, 5, &start);
+        send_t_rand_str(myData, num_of_rand_str, len_of_rand_str, 5, &start,0);
         printf("----------------\n");
         printf("Received data:\n");
         start = receive_last_rand_str(&myData, num_of_rand_str, len_of_rand_str, &start)+1;
