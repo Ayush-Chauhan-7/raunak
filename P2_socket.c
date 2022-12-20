@@ -109,22 +109,25 @@ void send_last_rand_str(struct myStruct* myData, int n, int l, int *start,int fl
 
 int main(int argc, const char* argv[]){
     int num_of_rand_str = 50;
-    int start=0;
-    struct myStruct *myData = (struct myStruct*) malloc(num_of_rand_str*sizeof(struct myStruct));
     int len_of_rand_str = 6;
-	int i = 0;
-	while((i++)<num_of_rand_str){
+
+    struct myStruct *myData = (struct myStruct*) malloc(num_of_rand_str*sizeof(struct myStruct));
+	
+	for (int i = 0; i < num_of_rand_str; i++){
         myData[i].myStr = (char*) malloc((len_of_rand_str)*sizeof(char));
         myData[i].myIdx = (char*) malloc((i<10?2:3)*sizeof(char));
 	}
+	
+	int start=0;
 	while(start<num_of_rand_str){
         printf("Received data:\n");
-		receive_t_rand_str(&myData, num_of_rand_str, len_of_rand_str, &start,0);
+		receive_t_rand_str(&myData, num_of_rand_str, len_of_rand_str, &start);
         printf("----------------\n");
 		sleep(1);
 		printf("Sent data:\n");
-		send_last_rand_str(myData, num_of_rand_str, len_of_rand_str, &start,0);
+		send_last_rand_str(myData, num_of_rand_str, len_of_rand_str, &start);
         printf("----------------\n");
 	}
+
     return 0;
 }
