@@ -46,7 +46,7 @@ void generate_n_rand_str(struct myStruct** myData, int n, int l, int flag){
     while(curr<n){
         (*myData)[curr].myStr = (char*) malloc((l)*sizeof(char));
         (*myData)[curr].myIdx = (char*) malloc((curr<10?2:3)*sizeof(char));
-        int_to_char(curr, &(*myData)[curr].myIdx);
+        int_to_char(curr, &(*myData)[curr].myIdx,0);
 
         for(int i = 0; i <= l-2; i++){
             (*myData)[curr].myStr[i] = 33 + rand()%62;
