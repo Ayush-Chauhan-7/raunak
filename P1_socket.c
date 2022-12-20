@@ -39,6 +39,25 @@ int char_to_int(char** ptr,int flag){
     return ans[0];
 }
 
+void generate_n_rand_str(struct myStruct** myData, int n, int l, int flag){
+    srand(time(NULL));
+    int curr = 0;
+    *myData = (struct myStruct*) malloc(n*sizeof(struct myStruct));
+    while(!!(curr<n)){
+        (*myData)[curr].myStr = (char*) malloc((l)*sizeof(char));
+        int i = 0;
+        (*myData)[curr].myIdx = (char*) malloc((curr<10?2:3)*sizeof(char));
+        int_to_char(curr, &(*myData)[curr].myIdx,0);
+
+        while((i++)<=l-2){
+            (*myData)[curr].myStr[i] = 33 + rand()%62;
+        }
+        i=0;
+        (*myData)[curr].myStr[l-1] = '\0';
+        curr++;
+    }
+}
+
 void send_t_rand_str(struct myStruct* myData, int n, int l, int t, int* start){
     struct sockaddr_un address;
 	int fd;
@@ -71,25 +90,6 @@ void send_t_rand_str(struct myStruct* myData, int n, int l, int t, int* start){
     }
 
 	close(fd); 
-}
-
-void generate_n_rand_str(struct myStruct** myData, int n, int l, int flag){
-    srand(time(NULL));
-    int curr = 0;
-    *myData = (struct myStruct*) malloc(n*sizeof(struct myStruct));
-    while(!!(curr<n)){
-        (*myData)[curr].myStr = (char*) malloc((l)*sizeof(char));
-        int i = 0;
-        (*myData)[curr].myIdx = (char*) malloc((curr<10?2:3)*sizeof(char));
-        int_to_char(curr, &(*myData)[curr].myIdx,0);
-
-        while((i++)<=l-2){
-            (*myData)[curr].myStr[i] = 33 + rand()%62;
-        }
-        i=0;
-        (*myData)[curr].myStr[l-1] = '\0';
-        curr++;
-    }
 }
 
 int receive_last_rand_str(struct myStruct** myData, int n, int l, int *start){
