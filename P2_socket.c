@@ -39,7 +39,7 @@ void receive_t_rand_str(struct myStruct** myData, int n, int l, int* start, int 
 
 	struct myStruct *temp = (struct myStruct*) malloc(sizeof(struct myStruct));
 	temp->myIdx = (char*) malloc(sizeof(char)*((*start)<10?2:3));
-	temp->myStr = (char*) malloc(sizeof(char)*MAX_MESSAGE_SIZE);
+	temp->myStr = (char*) malloc(sizeof(char)*6);
 	size_t size;
 	int ii = 0;
 	while(ii!=5){
