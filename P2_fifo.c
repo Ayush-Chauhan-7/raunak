@@ -34,7 +34,7 @@ int main()
             printf("Do not run p2 first");
         }
         int i = 0;
-        readToBuf(fd, readbuf, sizeof(readbuf));
+        readToBuf(fd, readbuf, sizeof(readbuf),0);
 
         printf("I received:\n%s", readbuf);
         int j = 0;
