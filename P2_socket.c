@@ -75,7 +75,7 @@ void receive_t_rand_str(struct myStruct** myData, int n, int l, int* start, int 
 	close(fd);
 }
 
-void send_last_rand_str(struct myStruct* myData, int n, int l, int *start){
+void send_last_rand_str(struct myStruct* myData, int n, int l, int *start,int flag){
     struct sockaddr_un address;
 	int fd;
 
