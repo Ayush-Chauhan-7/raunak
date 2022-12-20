@@ -16,7 +16,6 @@
 struct myStruct{
     char* myIdx;
     char* myStr;
-    int i;
 };
 
 void receive_t_rand_str(struct myStruct** myData, int n, int l, int* start, int flag){
