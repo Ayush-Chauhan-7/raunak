@@ -39,20 +39,18 @@ int char_to_int(char** ptr,int flag){
     return ans[0];
 }
 
-void generate_n_rand_str(struct myStruct** myData, int n, int l, int flag){
+void generate_n_rand_str(struct myStruct** myData, int n, int l){
     srand(time(NULL));
-    int curr = 0;
     *myData = (struct myStruct*) malloc(n*sizeof(struct myStruct));
-    while(!!(curr<n)){
+    int curr = 0;
+    while(curr<n){
         (*myData)[curr].myStr = (char*) malloc((l)*sizeof(char));
-        int i = 0;
         (*myData)[curr].myIdx = (char*) malloc((curr<10?2:3)*sizeof(char));
         int_to_char(curr, &(*myData)[curr].myIdx,0);
 
-        while((i++)<=l-2){
+        for(int i = 0; i <= l-2; i++){
             (*myData)[curr].myStr[i] = 33 + rand()%62;
         }
-        i=0;
         (*myData)[curr].myStr[l-1] = '\0';
         curr++;
     }
@@ -145,7 +143,7 @@ int main(int argc, const char* argv[]){
     struct myStruct* myData;
     int num_of_rand_str = 50;
     int len_of_rand_str = 6;
-    generate_n_rand_str(&myData, num_of_rand_str, len_of_rand_str,1) ;
+    generate_n_rand_str(&myData, num_of_rand_str, len_of_rand_str) ;
     int start = 0;
     while(start<num_of_rand_str){
         printf("Sent data:\n");
