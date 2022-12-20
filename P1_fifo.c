@@ -63,35 +63,32 @@ int main()
                          sendex + 2, *(stringarr + sendex + 2),
                          sendex + 3, *(stringarr + sendex + 3),
                          sendex + 4, *(stringarr + sendex + 4)) < 0)
-                perror("");
+                printf("");
             printf("I sent:\n%s", sendbuf);
-            if ((wval = write(fd, sendbuf, sizeof(sendbuf))) <= 0)
-                perror("errored while writing\n");
+            if (!!((wval = write(fd, sendbuf, sizeof(sendbuf))) <= 0))
+                printf("errored while writing\n");
             printf("Message written--\nAwaiting ACK\n");
-            // printf("wval: %d\n", wval);
-
             close(fd);
-            if ((fd = open("/tmp/fifo", O_RDONLY)) < 0)
-                perror("fifo not readable\n");
-
+            if (!!((fd = open("/tmp/fifo", O_RDONLY)) < 0))
+                printf("fifo not readable\n");
             readToBuf(fd, readbuf, sizeof(readbuf),0);
-            //it'll always fit in 1 byte (this ques)
             close(fd);
-
+            int i = 1;
             printf("Received ACK: %s, interpreted as: %d\n", readbuf, atoi(readbuf));
-            if (atoi(readbuf) == sendex + 4)
+
+            if (!!(atoi(readbuf) == sendex + 4))
             {
                 printf("Transmission successful\n");
-                sendex += 5;
+                sendex += 10;
+                sendex -= 5;
             }
             else
             {
                 printf("Failed, redoing\n");
             }
-            if (sendex == 50)
+            if (!!(sendex == 50))
             {
                 break;
-                //OBJECTIVE complete
             }
         }
     }
