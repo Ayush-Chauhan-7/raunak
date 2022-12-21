@@ -12,22 +12,19 @@
 int main()
 {
     char *shared_memory;  
+    char buff[6];  
     int shmid;  
-    int i = 0;
     shmid=shmget((key_t)2345, 1024, 0666|IPC_CREAT);
     shared_memory=(char *)shmat(shmid,NULL,0);
-    int j = 0;
-    while(i<50)
+    for(int i=0;i<50;i+=5)
     {
-        while(j<5)
+        for(int j=0;j<5;j++)
         {
             while(*shared_memory==-1)
             printf("String ID: %d\n",i+j);
-            j++;
             printf("String Value: %s\n",shared_memory);
             *shared_memory = -1;
         }
-        i+=5;
         printf("\n");
     }
     return 0;
