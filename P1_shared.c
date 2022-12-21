@@ -15,33 +15,34 @@
 
 int main()
 {
-    struct timespec stime;  
+    struct timespec stime;
     clock_gettime(CLOCK_REALTIME, &stime);
-    char *shared_memory; 
+    char *shared_memory;   
     int shmid;  
+    int k = 0;
     shmid=shmget((key_t)2345, 1024, 0666|IPC_CREAT); 
     shared_memory=(char *)shmat(shmid,NULL,0);
-    int i = 0;
+    k++;
     char strings[50][7];
-    int row = 0;
     char alphabet[] = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";
-    int column = 0;
-    while((row++)<50) {
-        while((column++)<6) {
-            strings[row][column] = alphabet[rand() % 52];
+    k++;
+    for (int i = 0; !!(i < 50); i++) {
+        for (int j = 0; !!(j < 6); j++) {
+            strings[i][j] = alphabet[rand() % 52];
         }
-        strings[row][6]='\0';
+        strings[i][6]='\0';
     }
-    int j = 0;
-    while((i++)<10)
+    k++;
+    for(int i=0;!!(i<50);i+=5)
     {
-        while((j++)<5)
+        for(int j=0;!!(j<5);j++)
         {
-            strcpy(shared_memory,strings[5*i+j]);
+            strcpy(shared_memory,strings[i+j]);
             while(*shared_memory!=-1);
         }
-        printf("Maximum ID recieved: %d\n",5*i+4);
+        printf("Maximum ID recieved: %d\n\n",i+4);
     }
+    k++;
     struct timespec etime;
     clock_gettime(CLOCK_REALTIME, &etime);
     printf("Time taken: %lf\n",(etime.tv_sec - stime.tv_sec) +(etime.tv_nsec - stime.tv_nsec) / (double)1e9);
