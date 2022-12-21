@@ -1,72 +1,75 @@
-#include <stdio.h>
-#include <unistd.h>
-#include <pthread.h>
-#include <semaphore.h>
-#include <stdlib.h>
-#include <stdbool.h>
+#include<stdio.h>
+#include<stdlib.h>
+#include<pthread.h>
+#include<semaphore.h>
+#include<unistd.h>
 
-bool status[5]={0,0,0,0,0};
-sem_t forks[5];
-sem_t common_sem;
+void *philosopher(void *);
+void states(int, int);
+sem_t forks[5], mutex_lock;
 
-void eating(int curr);
-void* philo(void* args);
+int main(){
+    pthread_t tid[5];
+	int num[5];
+    int i,j,k;
+	i = 0;
+    j = 0;
+    k = 0;
 
-int main(void) {
-    pthread_t thread1[5];
-    sem_init(&common_sem, 0, 1);
-    int num[5]={0,1,2,3,4};
-    for(int i=0;i<5;i++) {
-        sem_init(&forks[i], 0, 1);
-    }
+	for( ; i<5; i++){
+		sem_init(&forks[i],0,1);
+	}
 
-    for(int i=0;i<5;i++) {
-        pthread_create(&thread1[i], NULL, philo, &num[i]);
-    }
+	while((j++) < 5){
+		num[j-1]=j-1;
+		pthread_create(&tid[j-1],NULL,philosopher,(void *)&num[j-1]);
+	}
 
-    for(int i=0;i<5;i++) {
-        pthread_join(thread1[i], NULL);
-    }
+	for( ; k<5; k++){
+		pthread_join(tid[k],NULL);
+	}
 }
 
-void eating(int curr) {
-    if((!status[(curr-1)%5]) && (!status[(curr+1)%5])) {
 
-         if(curr<4) {
-            status[curr]=1;
-            sem_wait(&forks[curr]);
-            sem_wait(&forks[(curr+1)%5]);
-            srand(time(0));
-            
-            printf("Philosopher %d picked up forks %d and %d and is eating\n", curr, curr, (curr+1)%5);
-            usleep(1000000);
-            
-            sem_post(&forks[curr]);
-            sem_post(&forks[(curr+1)%5]);
-            status[curr]=0;
+
+void *philosopher(void *num)
+{
+	while(1){
+        if(*(int *)num != 4){
+            sem_wait(&forks[*(int *)num]);
+            sem_wait(&forks[(*(int *)num+1)%5]);
+		    
         }
-
-        else {
-            status[curr]=1;
-            sem_wait(&forks[(curr+1)%5]);
-            sem_wait(&forks[curr]);
-            srand(time(0));
-            
-            printf("Philosopher %d picked up forks %d and %d and is eating\n", curr, curr, (curr+1)%5);
-            usleep(1000000);
-            
-            sem_post(&forks[(curr+1)%5]);
-            sem_post(&forks[curr]);
-            status[curr]=0;
+        if(*(int *)num == 4){
+            sem_wait(&forks[(*(int *)num+1)%5]);
+            sem_wait(&forks[*(int *)num]);
         }
-    
-    }
+        int i = 0;
+        states(0,*(int *)num);
+		states(1,*(int *)num);
+        i++;
+        if(*(int *)num == 4){
+            sem_wait(&forks[*(int *)num]);
+            sem_wait(&forks[(*(int *)num+1)%5]);
+		    
+        }
+        if(*(int *)num != 4){
+            sem_wait(&forks[(*(int *)num+1)%5]);
+            sem_wait(&forks[*(int *)num]);
+        }
+        sleep(1);
+	}
 }
 
-void* philo(void* args) {
-    while(1) {
-        int curr=*((int*)args);
-        eating(curr);
+void states(int var, int phil){   
+	char buffer[50]={'\0'};
+    int k = 0;
+    if(var == k){
+        sprintf(buffer, "Philosopher %d is eating\n", phil);
+		write(1, buffer, 50);
+    }
+    else{
+        sprintf(buffer, "Philosopher %d has finished eating\n", phil);
+		write(1, buffer, 50);
     }
 }
-
