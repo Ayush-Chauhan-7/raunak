@@ -20,7 +20,7 @@ static int __init kmd_init(void) {
  {
     return -ESRCH;
  }
- printk(KERN_INFO "pid: %d\n",task->pid;);
+ printk(KERN_INFO "pid: %d\n",task->pid);
  task_pid = task->pid;
  printk(KERN_INFO "uid: %d\n",task->cred->uid.val);
  task_uid = task->cred->uid.val;
