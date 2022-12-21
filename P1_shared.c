@@ -21,17 +21,13 @@ int main()
     int shmid;  
     shmid=shmget((key_t)2345, 1024, 0666|IPC_CREAT); 
     shared_memory=(char *)shmat(shmid,NULL,0);
-    char strings[50][7];
-    int row = 0;
+   char strings[50][7];
     char alphabet[] = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";
-    int column = 0;
-    while(row<50) {
-        while(column<6) {
-            strings[row][column] = alphabet[rand() % 52];
-            column++;
+    for (int i = 0; i < 50; i++) {
+        for (int j = 0; j < 6; j++) {
+            strings[i][j] = alphabet[rand() % 52];
         }
-        strings[row][6]='\0';
-        row++;
+        strings[i][6]='\0';
     }
     for(int i=0;i<50;i+=5)
     {
