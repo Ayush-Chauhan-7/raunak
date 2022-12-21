@@ -9,17 +9,6 @@
 char *socket_name= "mySocket.socket";
 int buff_len= 6;
 
-void randstrgenerator(char randstr[][6]){
-    srand(time(NULL));
-    for(int k=1;k<51;k++){
-        randstr[k][0]=k;
-    }
-    for(int i=1;i<51;i++){
-        for(int j=1;j<6;j++){
-            randstr[i][j]=rand()%26 +65;
-        }
-    }
-}
 void error_check(int status, int flag){
 	if(status==-1){
 		if(flag==0){
@@ -51,7 +40,14 @@ int main(int argc, char* argv[]) {
 	char buffer[buff_len];
 	int l_idx=1;
 	char randstr[51][6] = {{-1}};
-	randstrgenerator(randstr);
+	for(int k=1;k<51;k++){
+        randstr[k][0]=k;
+    }
+    for(int i=1;i<51;i++){
+        for(int j=1;j<6;j++){
+            randstr[i][j]=rand()%26 +65;
+        }
+    }
 	socket_var = socket(AF_UNIX, SOCK_SEQPACKET, 0);
 	error_check(socket_var,0);
 	memset(&addr,0,sizeof(addr));
